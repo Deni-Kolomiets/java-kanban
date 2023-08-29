@@ -29,7 +29,7 @@ public class Main {
         epic2.subIdArray.add(sub21.id);
 
         Simple newSimple1 = new Simple("Title newSimple 1", "description newSimple 1", "IN PROGRESS");
-        manager.updateSimple(simple1.getId(), newSimple1); // update simple1.getId(), newSimple1;
+        manager.updateSimple(simple1.getId(), newSimple1);
 
         Sub newSub11 = new Sub("Title newSub 1", "description newSub 11", "DONE", epic1.getId());
         manager.updateSub(sub11.getId(), newSub11);

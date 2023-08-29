@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class Epic extends Task {  // Тут поля protected должны быть
+public class Epic extends Task {
     protected ArrayList<Integer> subIdArray = new ArrayList<>();
     protected int id;
     protected String status;

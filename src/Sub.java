@@ -1,6 +1,6 @@
 public class Sub extends Task {
     protected String status;
-    protected int epicId; // это id эпика
+    protected int epicId;
     public Sub(String title, String description, String status, int epicId) {
         this.title = title;
         this.description = description;

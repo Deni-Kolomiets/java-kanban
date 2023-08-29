@@ -1,8 +1,7 @@
 public class Task {
-    protected int id; // Это надо, нов конструктор не вставлять!
+    protected int id;
     protected String title;
     protected String description;
-    //protected String status;
 
     public int getId() {
         return id;
