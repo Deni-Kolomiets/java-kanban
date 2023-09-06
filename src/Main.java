@@ -1,6 +1,7 @@
-package ru.yandex.javacource.kolomiets.schedule.tasks;
-
 import ru.yandex.javacource.kolomiets.schedule.manager.TaskManager;
+import ru.yandex.javacource.kolomiets.schedule.tasks.Task;
+import ru.yandex.javacource.kolomiets.schedule.tasks.Epic;
+import ru.yandex.javacource.kolomiets.schedule.tasks.Subtask;
 
 public class Main {
 
@@ -13,7 +14,7 @@ public class Main {
         manager.addSimple(simpleTask1);
         Task simpleTask2 = new Task("Title simple 2", "description simple 2", "NEW");
         manager.addSimple(simpleTask2);
-        System.out.println(simpleTask1 + " " + simpleTask2); // +
+        System.out.println(simpleTask1 + " " + simpleTask2);
 
 
         Epic epic1 = new Epic("Title epic 1", "description epic 1", "NEW");

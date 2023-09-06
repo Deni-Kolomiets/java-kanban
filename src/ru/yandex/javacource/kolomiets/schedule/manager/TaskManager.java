@@ -1,4 +1,8 @@
-import ru.yandex.javacource.Kolomiets.schedule.manager.tasks.Epic;
+package ru.yandex.javacource.kolomiets.schedule.manager;
+
+import ru.yandex.javacource.kolomiets.schedule.tasks.Task;
+import ru.yandex.javacource.kolomiets.schedule.tasks.Subtask;
+import ru.yandex.javacource.kolomiets.schedule.tasks.Epic;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,7 +20,6 @@ public class TaskManager {
         return id;
     }
 
-
     public int addEpic(Epic epic) {
         int id = ++generatorId;
         epic.setId(id);
@@ -30,9 +33,11 @@ public class TaskManager {
         subtasks.put(id, sub);
         return id;
     }
+
     public ArrayList<Task> getTask() {
         return new ArrayList<>(tasks.values());
     }
+
     public ArrayList<Subtask> getSubtasks() {
         return new ArrayList<>(subtasks.values());
     }
@@ -40,15 +45,18 @@ public class TaskManager {
     public ArrayList<Epic> getEpic() {
         return new ArrayList<>(epics.values());
     }
+
     public void deleteTask(int id) {
         tasks.remove(id);
     }
+
     public void deleteEpic(int id) {
         final Epic epic = epics.remove(id);
-        for (Integer subtaskId : epic.getSubIdArray()) {
+        for (Integer subtaskId : epic.getSubtaskIds()) {
             subtasks.remove(subtaskId);
         }
     }
+
     public void deleteSubtask(int id) {
         Subtask subtask = subtasks.remove(id);
         if (subtask == null) {
@@ -58,9 +66,11 @@ public class TaskManager {
         epic.removeSubtask(id);
         updateEpicStatus(epic.getId());
     }
+
     public void deleteTasks() {
         tasks.clear();
     }
+
     public void deleteSubtasks() {
         for (Epic epic : epics.values()) {
             epic.cleanSubtaskIds();
@@ -68,6 +78,7 @@ public class TaskManager {
         }
         subtasks.clear();
     }
+
     public void deleteEpics() {
         epics.clear();
         subtasks.clear();
@@ -76,10 +87,12 @@ public class TaskManager {
     public Task getTask(int id) {
         return tasks.get(id);
     }
-    public Subtask getSubtask(int id){
+
+    public Subtask getSubtask(int id) {
         return subtasks.get(id);
     }
-    public Epic getEpictask(int id){
+
+    public Epic getEpictask(int id) {
         return epics.get(id);
     }
 
@@ -109,28 +122,25 @@ public class TaskManager {
 
     public void updateEpic(Epic epic) {
         Epic savedEpic = epics.get(epic.getId());
-        epic.setSubIdArray(savedEpic.getSubIdArray());
         savedEpic.setTitle(epic.getTitle());
         savedEpic.setDescription(epic.getDescription());
-        savedEpic.setSubIdArray(epic.getSubIdArray());
-        epic.setSubIdArray(savedEpic.getSubIdArray());
     }
 
     private void updateEpicStatus(int epicId) {
         Epic epic = epics.get(epicId);
         ArrayList<String> statusMemory = new ArrayList<>();
-        for(Integer colId: epic.getSubIdArray()) {
+        for (Integer colId : epic.getSubtaskIds()) {
             statusMemory.add(subtasks.get(colId).getStatus());
         }
         int check = 0;
-        for(String status: statusMemory){
-            if(status.equals("IN PROGRESS")){
+        for (String status : statusMemory) {
+            if (status.equals("IN PROGRESS")) {
                 epic.setStatus("IN PROGRESS");
                 return;
             }
         }
-        for(String status: statusMemory){
-            if (!status.equals("DONE")){
+        for (String status : statusMemory) {
+            if (!status.equals("DONE")) {
                 check++;
             }
         }

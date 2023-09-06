@@ -1,9 +1,9 @@
-import ru.yandex.javacource.Kolomiets.schedule.manager.tasks.Task;
+package ru.yandex.javacource.kolomiets.schedule.tasks;
 
 import java.util.ArrayList;
 
 public class Epic extends Task {
-    protected ArrayList<Integer> subIdArray = new ArrayList<>();
+    protected ArrayList<Integer> subtaskIds = new ArrayList<>();
 
     public Epic(String title, String description, String status) {
         super(title,description,status);
@@ -14,20 +14,24 @@ public class Epic extends Task {
     }
 
     public void cleanSubtaskIds(){
-        subIdArray.clear();
+        subtaskIds.clear();
     }
     public void removeSubtask(int id){
-        subIdArray.remove(id);
+        subtaskIds.remove(id);
     }
     public ArrayList<Integer> getSubIds() {
-        return subIdArray;
+        return subtaskIds;
     }
 
-    public ArrayList<Integer> getSubIdArray() {
-        return subIdArray;
+    public ArrayList<Integer> getSubtaskIds() {
+        return subtaskIds;
     }
 
-    public void setSubIdArray(ArrayList<Integer> subIdArray) {
-        this.subIdArray = subIdArray;
+    public void setSubtaskIds(ArrayList<Integer> subtaskIds) {
+        this.subtaskIds = subtaskIds;
+    }
+
+    public void addSubtaskId(int id){
+        subtaskIds.add(id);
     }
 }

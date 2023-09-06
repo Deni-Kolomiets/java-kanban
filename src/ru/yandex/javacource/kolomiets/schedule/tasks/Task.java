@@ -1,3 +1,5 @@
+package ru.yandex.javacource.kolomiets.schedule.tasks;
+
 import java.util.Objects;
 public class Task {
     protected int id;
