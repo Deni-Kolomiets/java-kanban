@@ -1,3 +1,5 @@
+import ru.yandex.javacource.Kolomiets.schedule.manager.tasks.Task;
+
 public class Subtask extends Task {
     protected int epicId;
     public Subtask(String title, String description, String status, int epicId) {

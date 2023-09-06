@@ -1,4 +1,5 @@
-import java.util.ArrayList;
+import ru.yandex.javacource.Kolomiets.schedule.manager.TaskManager;
+import ru.yandex.javacource.Kolomiets.schedule.manager.tasks.Epic;
 
 public class Main {
 
@@ -19,11 +20,11 @@ public class Main {
 
         Subtask sub11 = new Subtask("Title sub 1", "description sub 1", "NEW", epic1.getId());
         manager.addSub(sub11);
-        epic1.subIdArray.add(sub11.id);
+        epic1.getSubIdArray().add(sub11.getId());
 
         Subtask sub12 = new Subtask("Title sub 12", "description sub 12", "NEW", epic1.getId());
         manager.addSub(sub12);
-        epic1.subIdArray.add(sub12.id);
+        epic1.getSubIdArray().add(sub12.getId());
 
         Epic epic2 = new Epic("Title epic 2", "description epic 2", "NEW");
         manager.addEpic(epic2);
@@ -31,7 +32,7 @@ public class Main {
 
         Subtask sub21 = new Subtask("Title sub 21", "description sub 21", "NEW", epic2.getId());
         manager.addSub(sub21);
-        epic2.subIdArray.add(sub21.id);
+        epic2.getSubIdArray().add(sub21.getId());
 
         Task newTask1 = new Task("Title newSimple 1", "description newSimple 1", "IN PROGRESS", simpleTask1.getId());
         manager.updateTask(newTask1);
@@ -46,6 +47,6 @@ public class Main {
         Epic newEpic1 = new Epic("Title newEpic 1", "description newEpic 1", epic1.getStatus(), epic1.getId());
         manager.updateEpic(newEpic1);
         System.out.println(newEpic1.getStatus());
-        System.out.println("Вывод саб айди " + newEpic1.subIdArray); // Всё норм, только сразу значения передавать. Новые конструкторы
+        System.out.println("Вывод саб айди " + newEpic1.getSubIdArray());
     }
 }

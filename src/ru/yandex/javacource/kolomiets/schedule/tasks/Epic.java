@@ -1,3 +1,5 @@
+import ru.yandex.javacource.Kolomiets.schedule.manager.tasks.Task;
+
 import java.util.ArrayList;
 
 public class Epic extends Task {

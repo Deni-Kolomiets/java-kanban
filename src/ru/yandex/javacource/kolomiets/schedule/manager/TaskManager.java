@@ -1,3 +1,5 @@
+import ru.yandex.javacource.Kolomiets.schedule.manager.tasks.Epic;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -43,7 +45,7 @@ public class TaskManager {
     }
     public void deleteEpic(int id) {
         final Epic epic = epics.remove(id);
-        for (Integer subtaskId : epic.subIdArray) {
+        for (Integer subtaskId : epic.getSubIdArray()) {
             subtasks.remove(subtaskId);
         }
     }
@@ -117,13 +119,13 @@ public class TaskManager {
     private void updateEpicStatus(int epicId) {
         Epic epic = epics.get(epicId);
         ArrayList<String> statusMemory = new ArrayList<>();
-        for(Integer colId: epic.subIdArray) {
+        for(Integer colId: epic.getSubIdArray()) {
             statusMemory.add(subtasks.get(colId).getStatus());
         }
         int check = 0;
         for(String status: statusMemory){
             if(status.equals("IN PROGRESS")){
-                epic.status = "IN PROGRESS";
+                epic.setStatus("IN PROGRESS");
                 return;
             }
         }
@@ -133,7 +135,7 @@ public class TaskManager {
             }
         }
         if (check == 0) {
-            epic.status = "DONE";
+            epic.setStatus("DONE");
         }
     }
 }
