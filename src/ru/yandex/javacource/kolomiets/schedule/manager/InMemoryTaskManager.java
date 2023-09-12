@@ -4,14 +4,21 @@ import ru.yandex.javacource.kolomiets.schedule.Status;
 import ru.yandex.javacource.kolomiets.schedule.tasks.Task;
 import ru.yandex.javacource.kolomiets.schedule.tasks.Subtask;
 import ru.yandex.javacource.kolomiets.schedule.tasks.Epic;
+import ru.yandex.javacource.kolomiets.schedule.historymemory.HistoryManager;
+import ru.yandex.javacource.kolomiets.schedule.Managers;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.HashMap;
 
 public class InMemoryTaskManager implements TaskManager {
-    private final HashMap<Integer, Task> tasks = new HashMap<>();
-    private final HashMap<Integer, Epic> epics = new HashMap<>();
-    private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
+
+    private final Map<Integer, Task> tasks = new HashMap<>();
+    private final Map<Integer, Epic> epics = new HashMap<>();
+    private final Map<Integer, Subtask> subtasks = new HashMap<>();
+
+    private final HistoryManager historyManager = Managers.getDefaultHistory();
 
     private int generatorId = 0;
 
@@ -100,17 +107,24 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task getTask(int id) {
+        historyManager.addTask(tasks.get(id));
         return tasks.get(id);
     }
 
     @Override
     public Subtask getSubtask(int id) {
+        historyManager.addTask(subtasks.get(id));
         return subtasks.get(id);
     }
 
     @Override
     public Epic getEpictask(int id) {
+        historyManager.addTask(epics.get(id));
         return epics.get(id);
+    }
+
+    public List<Task> getHistory() {
+        return historyManager.getHistory();
     }
 
     @Override
