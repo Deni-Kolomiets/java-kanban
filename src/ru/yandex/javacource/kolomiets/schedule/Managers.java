@@ -1,6 +1,6 @@
 package ru.yandex.javacource.kolomiets.schedule;
-import ru.yandex.javacource.kolomiets.schedule.HistoryMemory.HistoryManager;
-import ru.yandex.javacource.kolomiets.schedule.HistoryMemory.InMemoryHistoryManager;
+import ru.yandex.javacource.kolomiets.schedule.historyMemory.HistoryManager;
+import ru.yandex.javacource.kolomiets.schedule.historyMemory.InMemoryHistoryManager;
 import ru.yandex.javacource.kolomiets.schedule.manager.InMemoryTaskManager;
 import ru.yandex.javacource.kolomiets.schedule.manager.TaskManager;
 

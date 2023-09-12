@@ -3,7 +3,7 @@ import ru.yandex.javacource.kolomiets.schedule.tasks.Task;
 import ru.yandex.javacource.kolomiets.schedule.tasks.Epic;
 import ru.yandex.javacource.kolomiets.schedule.tasks.Subtask;
 import ru.yandex.javacource.kolomiets.schedule.Status;
-import ru.yandex.javacource.kolomiets.schedule.HistoryMemory.InMemoryHistoryManager;
+import ru.yandex.javacource.kolomiets.schedule.historyMemory.InMemoryHistoryManager;
 
 
 public class Main {

@@ -1,4 +1,4 @@
-package ru.yandex.javacource.kolomiets.schedule.HistoryMemory;
+package ru.yandex.javacource.kolomiets.schedule.historyMemory;
 import ru.yandex.javacource.kolomiets.schedule.tasks.Task;
 
 import java.util.ArrayList;

@@ -4,10 +4,8 @@ import ru.yandex.javacource.kolomiets.schedule.Status;
 import ru.yandex.javacource.kolomiets.schedule.tasks.Task;
 import ru.yandex.javacource.kolomiets.schedule.tasks.Subtask;
 import ru.yandex.javacource.kolomiets.schedule.tasks.Epic;
-import ru.yandex.javacource.kolomiets.schedule.HistoryMemory.InMemoryHistoryManager;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.HashMap;
 
 public class InMemoryTaskManager implements TaskManager {
