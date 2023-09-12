@@ -1,2 +1,7 @@
-package ru.yandex.javacource.kolomiets.schedule;public class Status {
+package ru.yandex.javacource.kolomiets.schedule;
+
+public enum Status {
+    IN_PROGRESS,
+    DONE,
+    NEW
 }

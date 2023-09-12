@@ -1,4 +1,4 @@
-package ru.yandex.javacource.kolomiets.schedule;
+package ru.yandex.javacource.kolomiets.schedule.manager;
 import ru.yandex.javacource.kolomiets.schedule.tasks.*;
 import java.util.ArrayList;
 

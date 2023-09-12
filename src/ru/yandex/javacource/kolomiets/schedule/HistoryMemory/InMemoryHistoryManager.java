@@ -1,14 +1,16 @@
-package ru.yandex.javacource.kolomiets.schedule;
-// import ru.yandex.javacource.kolomiets.schedule.manager.InMemoryTaskManager;
+package ru.yandex.javacource.kolomiets.schedule.HistoryMemory;
+import ru.yandex.javacource.kolomiets.schedule.tasks.Task;
 
 import java.util.ArrayList;
 import java.util.List;
-public class InMemoryHistoryManager<Task> {
+
+public class InMemoryHistoryManager implements HistoryManager{
     private final List<Task> tasks = new ArrayList<>();
     int historyCounter = 0;
 
+    @Override
     public void addToHistory(Task task){
-        if(historyCounter <= 10) {
+        if(historyCounter <= HistoryManager.MAX_HISTORY_SIZE) {
             tasks.add(historyCounter, task);
             ++historyCounter;
         } else {
@@ -18,6 +20,7 @@ public class InMemoryHistoryManager<Task> {
         System.out.println(tasks);
     }
 
+    @Override
     public List<Task> getHistory() {
         return tasks;
     }
