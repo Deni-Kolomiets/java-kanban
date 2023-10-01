@@ -1,4 +1,5 @@
-import ru.yandex.javacource.kolomiets.schedule.manager.InMemoryTaskManager;
+import ru.yandex.javacource.kolomiets.schedule.historymemory.InMemoryHistoryManager;
+import ru.yandex.javacource.kolomiets.schedule.manager.InMemoryTaskManager; //
 import ru.yandex.javacource.kolomiets.schedule.tasks.Task;
 import ru.yandex.javacource.kolomiets.schedule.tasks.Epic;
 import ru.yandex.javacource.kolomiets.schedule.tasks.Subtask;
@@ -11,6 +12,7 @@ public class Main {
     public static void main(String[] args) {
         TaskManager taskManager = Managers.getDefault();
 
+        InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
 
         Task simpleTask1 = new Task("Title simple 1", "description simple 1", Status.NEW);
         taskManager.addSimple(simpleTask1);
@@ -29,22 +31,17 @@ public class Main {
         taskManager.addSub(sub12);
         epic1.addSubtaskId(sub12.getId());
 
+        Subtask sub13 = new Subtask("Title sub 13", "description sub 13", Status.NEW, epic1.getId());
+        taskManager.addSub(sub13);
+        epic1.addSubtaskId(sub13.getId());
+
         Epic epic2 = new Epic("Title epic 2", "description epic 2", Status.NEW);
         taskManager.addEpic(epic2);
 
-        Subtask sub21 = new Subtask("Title sub 21", "description sub 21", Status.NEW, epic2.getId());
-        taskManager.addSub(sub21);
-        epic2.addSubtaskId(sub21.getId());
+        // Тут начинаю проверять что сделал.
+        //System.out.println("Вывод таблицы - " + historyManager.getHistory());
 
 
-        Task newTask1 = new Task("Title newSimple 1", "description newSimple 1", Status.IN_PROGRESS, simpleTask1.getId());
-        taskManager.updateTask(newTask1);
-
-        Subtask newSub11 = new Subtask("Title newSub 1", "description newSub 11", Status.DONE, epic1.getId());
-        taskManager.updateSubtask(newSub11);
-
-        Subtask newSub12 = new Subtask("Title newSub 12", "description newSub 12", Status.DONE, epic1.getId());
-        taskManager.updateSubtask(newSub12);
     }
 }
 

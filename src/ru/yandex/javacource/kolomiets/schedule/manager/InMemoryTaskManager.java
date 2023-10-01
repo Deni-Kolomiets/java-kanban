@@ -123,6 +123,7 @@ public class InMemoryTaskManager implements TaskManager {
         return epics.get(id);
     }
 
+    @Override
     public List<Task> getHistory() {
         return historyManager.getHistory();
     }
@@ -164,7 +165,7 @@ public class InMemoryTaskManager implements TaskManager {
         Epic epic = epics.get(epicId);
         ArrayList<Status> statusMemory = new ArrayList<>();
         for (Integer colId : epic.getSubtaskIds()) {
-            statusMemory.add(subtasks.get(colId).getStatus()); // Тут трудности при передаче
+            statusMemory.add(subtasks.get(colId).getStatus());
         }
         int check = 0;
         for (Status status : statusMemory) {
