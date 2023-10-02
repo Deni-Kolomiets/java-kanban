@@ -1,7 +1,5 @@
 package ru.yandex.javacource.kolomiets.schedule.tasks;
 
-import ru.yandex.javacource.kolomiets.schedule.Status;
-
 public class Subtask extends Task {
     protected int epicId;
 

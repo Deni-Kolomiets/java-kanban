@@ -1,18 +1,14 @@
-import ru.yandex.javacource.kolomiets.schedule.historymemory.InMemoryHistoryManager;
-import ru.yandex.javacource.kolomiets.schedule.manager.InMemoryTaskManager; //
 import ru.yandex.javacource.kolomiets.schedule.tasks.Task;
 import ru.yandex.javacource.kolomiets.schedule.tasks.Epic;
 import ru.yandex.javacource.kolomiets.schedule.tasks.Subtask;
-import ru.yandex.javacource.kolomiets.schedule.Status;
+import ru.yandex.javacource.kolomiets.schedule.tasks.Status;
 import ru.yandex.javacource.kolomiets.schedule.manager.TaskManager;
-import ru.yandex.javacource.kolomiets.schedule.Managers;
+import ru.yandex.javacource.kolomiets.schedule.manager.Managers;
 
 
 public class Main {
     public static void main(String[] args) {
         TaskManager taskManager = Managers.getDefault();
-
-        InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
 
         Task simpleTask1 = new Task("Title simple 1", "description simple 1", Status.NEW);
         taskManager.addSimple(simpleTask1);
@@ -37,11 +33,6 @@ public class Main {
 
         Epic epic2 = new Epic("Title epic 2", "description epic 2", Status.NEW);
         taskManager.addEpic(epic2);
-
-        // Тут начинаю проверять что сделал.
-        //System.out.println("Вывод таблицы - " + historyManager.getHistory());
-
-
     }
 }
 

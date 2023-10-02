@@ -1,7 +1,5 @@
 package ru.yandex.javacource.kolomiets.schedule.tasks;
 
-import ru.yandex.javacource.kolomiets.schedule.Status;
-
 import java.util.Objects;
 
 public class Task {

@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
-public class InMemoryHistoryManager implements HistoryManager, CustomLinkedList {
-    private final Map<Integer, Node> nodeMap = new HashMap<>();
+public class InMemoryHistoryManager implements HistoryManager {
+    private final Map<Integer, Node> history = new HashMap<>();
     private Node first;
     private Node last;
 
@@ -20,7 +20,7 @@ public class InMemoryHistoryManager implements HistoryManager, CustomLinkedList 
         int id = task.getId();
         remove(id);
         linkLast(task);
-        getHistory();
+        history.put(id, last);
     }
 
     @Override
@@ -41,8 +41,8 @@ public class InMemoryHistoryManager implements HistoryManager, CustomLinkedList 
     }
 
     @Override
-    public void remove(int id) { // Этот метод перепроверить
-        Node node = nodeMap.remove(id);
+    public void remove(int id) {
+        Node node = history.remove(id);
         if (node == null) {
             return;
         }

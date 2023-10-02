@@ -1,11 +1,10 @@
 package ru.yandex.javacource.kolomiets.schedule.manager;
 
-import ru.yandex.javacource.kolomiets.schedule.Status;
+import ru.yandex.javacource.kolomiets.schedule.tasks.Status;
 import ru.yandex.javacource.kolomiets.schedule.tasks.Task;
 import ru.yandex.javacource.kolomiets.schedule.tasks.Subtask;
 import ru.yandex.javacource.kolomiets.schedule.tasks.Epic;
 import ru.yandex.javacource.kolomiets.schedule.historymemory.HistoryManager;
-import ru.yandex.javacource.kolomiets.schedule.Managers;
 
 import java.util.ArrayList;
 import java.util.List;
