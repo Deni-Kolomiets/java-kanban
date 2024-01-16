@@ -8,13 +8,13 @@ import java.util.List;
 
 
 public interface TaskManager {
-    int addSimple(Task task);
+    void addSimple(Task task);
 
-    int addEpic(Epic epic);
+    void addEpic(Epic epic);
 
-    int addSub(Subtask sub);
+    void addSub(Subtask sub);
 
-    List<Task> getTask();
+    List<Task> getTasks();
 
     List<Subtask> getSubtasks();
 

@@ -3,9 +3,15 @@ package ru.yandex.javacource.kolomiets.schedule.tasks;
 public class Subtask extends Task {
     protected int epicId;
 
-    public Subtask(String title, String description, Status status, int epicId) {
-        super(title, description, status);
-        this.epicId = epicId;
+    public Subtask(String title, String description, int epic) {
+        super(title, description, epic);
+        this.epicId = epic;
+        this.type = TaskType.SUBTASK;
+    }
+
+    public Subtask(int id, String name, Status status, String description, int epic) {
+        super(id, name, status, description, epic);
+        this.type = TaskType.SUBTASK;
     }
 
     public int getEpicId() {

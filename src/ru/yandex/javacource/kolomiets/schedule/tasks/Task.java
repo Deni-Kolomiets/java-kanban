@@ -7,6 +7,16 @@ public class Task {
     protected String title;
     protected String description;
     protected Status status;
+    protected int epic;
+    protected TaskType type;
+    protected Status statusOfTask = Status.NEW;
+
+    public Task(String title, String description, int epic) {
+        this.title = title;
+        this.description = description;
+        this.statusOfTask = statusOfTask;
+        this.type = TaskType.TASK;
+    }
 
     public Task(String title, String description, Status status) {
         this.title = title;
@@ -19,6 +29,15 @@ public class Task {
         this.description = description;
         this.status = status;
         this.id = id;
+        this.type = TaskType.TASK;
+    }
+
+    public Task(int id, String name, Status status, String description, int epic) {
+        this.id = id;
+        this.title = name;
+        this.status = status;
+        this.description = description;
+        this.epic = epic;
     }
 
     public int getId() {
@@ -52,7 +71,29 @@ public class Task {
     public void setStatus(Status status) {
         this.status = status;
     }
+    public TaskType getType() {
+        return type;
+    }
 
+    public int getEpic() {
+        return epic;
+    }
+
+
+    @Override
+    public String toString() {
+        return "№" + id + " " + title +
+                ", описание: " + description +
+                ", statusOfTask: " + status;
+    }
+
+    public Status getStatusOfTask() {
+        return statusOfTask;
+    }
+
+    public void setStatusOfTask(Status statusOfTask) {
+        this.statusOfTask = statusOfTask;
+    }
 
     @Override
     public boolean equals(Object obj) {
@@ -78,10 +119,5 @@ public class Task {
             hash = hash + status.hashCode();
         }
         return hash;
-    }
-
-    @Override
-    public String toString () {
-        return super.toString();
     }
 }

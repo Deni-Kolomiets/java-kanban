@@ -1,5 +1,6 @@
 package ru.yandex.javacource.kolomiets.schedule.manager;
 
+import ru.yandex.javacource.kolomiets.schedule.historymemory.InMemoryHistoryManager;
 import ru.yandex.javacource.kolomiets.schedule.tasks.Status;
 import ru.yandex.javacource.kolomiets.schedule.tasks.Task;
 import ru.yandex.javacource.kolomiets.schedule.tasks.Subtask;
@@ -13,40 +14,52 @@ import java.util.HashMap;
 
 public class InMemoryTaskManager implements TaskManager {
 
+    private int numberOfTask = 0;
     private final Map<Integer, Task> tasks = new HashMap<>();
     private final Map<Integer, Epic> epics = new HashMap<>();
     private final Map<Integer, Subtask> subtasks = new HashMap<>();
 
-    private final HistoryManager historyManager = Managers.getDefaultHistory();
+    HistoryManager historyManager = new InMemoryHistoryManager();
 
     private int generatorId = 0;
 
     @Override
-    public int addSimple(Task task) {
-        int id = ++generatorId;
-        task.setId(id);
-        tasks.put(id, task);
-        return id;
+    public void addSimple(Task task) {
+        if (task.getId() != 0) {
+            tasks.put(task.getId(), task);
+        } else {
+            task.setId(getNumberOfTask());
+            tasks.put(task.getId(), task);
+        }
     }
 
     @Override
-    public int addEpic(Epic epic) {
-        int id = ++generatorId;
-        epic.setId(id);
-        epics.put(id, epic);
-        return id;
+    public void addEpic(Epic epic) {
+        if (epic.getId() != 0) {
+            epics.put(epic.getId(), epic);
+        } else {
+            epic.setId(getNumberOfTask());
+            epics.put(epic.getId(), epic);
+        }
     }
 
     @Override
-    public int addSub(Subtask sub) {
-        int id = ++generatorId;
-        sub.setId(id);
-        subtasks.put(id, sub);
-        return id;
+    public void addSub(Subtask subtask) {
+        if (subtask.getId() != 0) {
+            subtasks.put(subtask.getId(), subtask);
+        } else {
+            subtask.setId(getNumberOfTask());
+            subtasks.put(subtask.getId(), subtask);
+        }
+        Epic epic = epics.get(subtask.getEpicId());
+        if (epic != null) {
+            epic.addSubtaskId(subtask.getId());
+        }
+        updateStatus(subtask.getEpicId());
     }
 
     @Override
-    public ArrayList<Task> getTask() {
+    public ArrayList<Task> getTasks() {
         return new ArrayList<>(tasks.values());
     }
 
@@ -181,5 +194,42 @@ public class InMemoryTaskManager implements TaskManager {
         if (check == 0) {
             epic.setStatus(Status.DONE);
         }
+    }
+
+    private void updateStatus(Integer epicId) {
+        Epic epic = epics.get(epicId);
+        if (epic != null) {
+            boolean containsDone = false;
+            boolean containsNew = false;
+            boolean containsInProgress = false;
+
+            for (Integer subtaskId : epic.getSubtaskIds()) {
+                Subtask subtask = subtasks.get(subtaskId);
+                if (subtask != null) {
+                    if (subtask.getStatusOfTask().equals(Status.NEW)) {
+                        containsNew = true;
+                    } else if (subtask.getStatusOfTask().equals(Status.DONE)) {
+                        containsDone = true;
+                    } else {
+                        containsInProgress = true;
+                    }
+                }
+            }
+
+            if (containsInProgress || containsNew && containsDone) {
+                epic.setStatusOfTask(Status.IN_PROGRESS);
+            } else if (containsNew && !containsDone && !containsInProgress) {
+                epic.setStatusOfTask(Status.NEW);
+            } else if (containsDone && !containsNew && !containsInProgress) {
+                epic.setStatusOfTask(Status.DONE);
+            } else {
+                epic.setStatusOfTask(Status.NEW);
+            }
+        }
+    }
+
+    private int getNumberOfTask() {
+        numberOfTask++;
+        return numberOfTask;
     }
 }
