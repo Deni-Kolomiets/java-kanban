@@ -9,12 +9,11 @@ public class Task {
     protected Status status;
     protected int epic;
     protected TaskType type;
-    protected Status statusOfTask = Status.NEW;
 
     public Task(String title, String description, int epic) {
         this.title = title;
         this.description = description;
-        this.statusOfTask = statusOfTask;
+        this.status = Status.NEW;
         this.type = TaskType.TASK;
     }
 
@@ -31,6 +30,7 @@ public class Task {
         this.id = id;
         this.type = TaskType.TASK;
     }
+
 
     public Task(int id, String name, Status status, String description, int epic) {
         this.id = id;
@@ -85,14 +85,6 @@ public class Task {
         return "№" + id + " " + title +
                 ", описание: " + description +
                 ", statusOfTask: " + status;
-    }
-
-    public Status getStatusOfTask() {
-        return statusOfTask;
-    }
-
-    public void setStatusOfTask(Status statusOfTask) {
-        this.statusOfTask = statusOfTask;
     }
 
     @Override

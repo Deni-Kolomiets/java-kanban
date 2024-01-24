@@ -6,12 +6,13 @@ import ru.yandex.javacource.kolomiets.schedule.tasks.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.io.*;
+
 public class CSVFormatter {
 
     public static String toStringFromTask(Task task) {
         return task.getId() + "," + task.getType() + "," + task.getTitle() + "," + task.getStatus() +
-                "," + task.getDescription() +
-                "," + task.getEpic();
+                "," + task.getDescription() + "," + task.getEpic(); // Без getEpic() раотать не будет
     }
     public static Task fromStringToTask(String taskStr) {
         String[] tokens = taskStr.split(",");
@@ -36,15 +37,29 @@ public class CSVFormatter {
         return new Task(name, description, status, id);
     }
 
-    public static String historyToString(HistoryManager manager) {
-        ArrayList<Integer> history = new ArrayList<>();
+    public static String historyToString(HistoryManager historyManager) {
+        /*ArrayList<Integer> history = new ArrayList<>();
         for(Task task: manager.getHistory()) {
             history.add(task.getId());
         }
         return history.toString();
+         */
+        final List<Task> history = historyManager.getHistory();
+        if (history.isEmpty()) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append(history.get(0).getId());
+        for (int i = 1; i < history.size(); i++) {
+            Task task = history.get(i);
+            sb.append(",");
+            sb.append(task.getId());
+        }
+        return sb.toString();
+
     }
 
-    public static List<Integer> historyFromString(String historyStr) {
+    public static List<Integer> historyFromString(String historyStr) throws ManagerSaveException {
         List<Integer> historyOfTasks = new ArrayList<>();
         String[] history = historyStr.split(",");
         for (String h : history) {
@@ -52,10 +67,15 @@ public class CSVFormatter {
                 try {
                     historyOfTasks.add(Integer.parseInt(h));
                 } catch (NumberFormatException e) {
-                    System.err.println("Ошибка парсинга: " + e.getMessage());
+                    throw new ManagerSaveException("Can't read from file");
+
                 }
             }
         }
         return historyOfTasks;
+    }
+
+    public static String getHeader() {
+        return ("id,type,name,status,description,epic");
     }
 }

@@ -1,7 +1,5 @@
 package ru.yandex.javacource.kolomiets.schedule.manager;
 
-import ru.yandex.javacource.kolomiets.schedule.historymemory.*;
-
 import ru.yandex.javacource.kolomiets.schedule.tasks.*;
 import ru.yandex.javacource.kolomiets.schedule.tasks.Epic;
 import ru.yandex.javacource.kolomiets.schedule.tasks.Task;
@@ -13,33 +11,33 @@ import java.util.List;
 import static ru.yandex.javacource.kolomiets.schedule.manager.CSVFormatter.historyFromString;
 
 public class FileBackendTaskManager extends InMemoryTaskManager {
-    File file;
+    private final File file;
 
     public FileBackendTaskManager(File fileName) {
         super();
         this.file = fileName;
     }
-    /*
-    public static FileBackendTaskManager loadFromFile (File file) {
-        TaskManager newTaskmanager = new FileBackendTaskManager(file);
 
+
+    public static FileBackendTaskManager loadFromFile(File file) throws ManagerSaveException {
+        FileBackendTaskManager newTaskManager = new FileBackendTaskManager(file);
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            String line;
+            String line; // Обновление generatorId тут не нужен, я считаю
             boolean skipFirstLine = true;
             while ((line = br.readLine()) != null) {
-                if (skipFirstLine == true) {
+                if (skipFirstLine) {
                     skipFirstLine = false;
                     continue;
                 }
 
                 if (!line.isBlank()) {
                     Task task = CSVFormatter.fromStringToTask(line);
-                    if (task != null && task.getType() == TaskType.TASK) {
-                        newTaskmanager.addSimple(task);
-                    } else if (task != null && task.getType() == TaskType.SUBTASK) {
-                        newTaskmanager.addSub((Subtask) task);
-                    } else if (task != null && task.getType() == TaskType.EPIC) {
-                        newTaskmanager.addEpic((Epic) task);
+                    if (task.getType() == TaskType.TASK) {
+                        newTaskManager.addSimple(task);
+                    } else if (task.getType() == TaskType.SUBTASK) {
+                        newTaskManager.addSub((Subtask) task);
+                    } else if (task.getType() == TaskType.EPIC) {
+                        newTaskManager.addEpic((Epic) task);
                     }
                 }
 
@@ -47,61 +45,17 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
                     line = br.readLine();
                     List<Integer> historyNumbers = historyFromString(line);
                     for (Integer taskId : historyNumbers) {
-                        if (newTaskmanager.getTasks().get(taskId) != null) {
-                            ((FileBackendTaskManager) newTaskmanager).historyManager.addTask(newTaskmanager.getTasks().get(taskId)); // Проверить эти методы на правильность того что возвращают таблицу
-                        } else if (newTaskmanager.getEpic().get(taskId) != null) {
-                            ((FileBackendTaskManager) newTaskmanager).historyManager.addTask(newTaskmanager.getEpic().get(taskId));
-                        } else if (newTaskmanager.getSubtasks().get(taskId) != null) {
-                            ((FileBackendTaskManager) newTaskmanager).historyManager.addTask(newTaskmanager.getSubtasks().get(taskId)); // newTaskmanager.addTask()
-                        }
-                    }
-                    break;
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return (FileBackendTaskManager) newTaskmanager;
-    }
-
-     */
-    public static FileBackendTaskManager loadFromFile(File file) {
-        FileBackendTaskManager newTaskmanager = new FileBackendTaskManager(file);
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            String line;
-            boolean skipFirstLine = true;
-            while ((line = br.readLine()) != null) {
-                if (skipFirstLine == true) {
-                    skipFirstLine = false;
-                    continue;
-                }
-
-                if (!line.isBlank()) {
-                    Task task = CSVFormatter.fromStringToTask(line);
-                    if (task != null && task.getType() == TaskType.TASK) {
-                        newTaskmanager.addSimple(task);
-                    } else if (task != null && task.getType() == TaskType.SUBTASK) {
-                        newTaskmanager.addSub((Subtask) task);
-                    } else if (task != null && task.getType() == TaskType.EPIC) {
-                        newTaskmanager.addEpic((Epic) task);
-                    }
-                }
-
-                if (line.isBlank()) {
-                    line = br.readLine();
-                    List<Integer> historyNumbers = historyFromString(line);
-                    for (Integer taskId : historyNumbers) {
-                        List<Task> taskList = newTaskmanager.getTasks();
+                        List<Task> taskList = newTaskManager.getTasks();
                         if (taskId < taskList.size() && taskList.get(taskId) != null) {
-                            newTaskmanager.historyManager.addTask(taskList.get(taskId));
+                            newTaskManager.historyManager.addTask(taskList.get(taskId));
                         } else {
-                            List<Epic> epicList = newTaskmanager.getEpic();
+                            List<Epic> epicList = newTaskManager.getEpic();
                             if (taskId < epicList.size() && epicList.get(taskId) != null) {
-                                newTaskmanager.historyManager.addTask(epicList.get(taskId));
+                                newTaskManager.historyManager.addTask(epicList.get(taskId));
                             } else {
-                                List<Subtask> subtaskList = newTaskmanager.getSubtasks();
+                                List<Subtask> subtaskList = newTaskManager.getSubtasks();
                                 if (taskId < subtaskList.size() && subtaskList.get(taskId) != null) {
-                                    newTaskmanager.historyManager.addTask(subtaskList.get(taskId));
+                                    newTaskManager.historyManager.addTask(subtaskList.get(taskId));
                                 }
                             }
                         }
@@ -110,10 +64,11 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new ManagerSaveException("Can't read from file: " + file.getName());
         }
-        return newTaskmanager;
+        return newTaskManager;
     }
+
     @Override
     public void addEpic(Epic epic) {
         super.addEpic(epic);
@@ -200,23 +155,22 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
 
     public void save() {
         try (Writer writer = new FileWriter(file)) {
-            writer.write("id,type,name,status,description,epic\n");
-
-            CSVFormatter formatter = new CSVFormatter();
+            writer.write(CSVFormatter.getHeader());
+            writer.write(System.lineSeparator());
 
             List<Task> tasks = new ArrayList<>(super.getTasks());
             for (Task task : tasks) {
-                writer.write(formatter.toStringFromTask(task) + "\n");
+                writer.write(CSVFormatter.toStringFromTask(task) + "\n");
             }
 
             List<Epic> epics = new ArrayList<>(super.getEpic());
             for (Epic epic : epics) {
-                writer.write(formatter.toStringFromTask(epic) + "\n");
+                writer.write(CSVFormatter.toStringFromTask(epic) + "\n");
             }
 
             List<Subtask> subtasks = new ArrayList<>(super.getSubtasks());
             for (Subtask subtask : subtasks) {
-                writer.write(formatter.toStringFromTask(subtask) + "\n");
+                writer.write(CSVFormatter.toStringFromTask(subtask) + "\n");
             }
 
             writer.write("\n");
@@ -236,7 +190,7 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
                 String historyStr = historyStrBuilder.toString();
                 writer.write(historyStr + "\n");
             }
-            //if (this.historyManager != null) {   Старый варинат 08.01 вечер
+            //if (this.historyManager != null) {
             //    String history = CSVFormatter.historyToString(this.historyManager);
             //    writer.write(history);
             //}
@@ -246,7 +200,6 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
             } catch (ManagerSaveException ex) {
                 throw new RuntimeException(ex);
             }
-
         }
     }
 }

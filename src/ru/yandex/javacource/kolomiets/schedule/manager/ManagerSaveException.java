@@ -1,6 +1,6 @@
 package ru.yandex.javacource.kolomiets.schedule.manager;
 
-public class ManagerSaveException extends Exception {
+public class ManagerSaveException extends RuntimeException {
     private String message;
 
     public ManagerSaveException(String message) {

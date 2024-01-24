@@ -1,11 +1,9 @@
 package ru.yandex.javacource.kolomiets.schedule.manager;
 
 import ru.yandex.javacource.kolomiets.schedule.historymemory.InMemoryHistoryManager;
-import ru.yandex.javacource.kolomiets.schedule.tasks.Status;
-import ru.yandex.javacource.kolomiets.schedule.tasks.Task;
-import ru.yandex.javacource.kolomiets.schedule.tasks.Subtask;
-import ru.yandex.javacource.kolomiets.schedule.tasks.Epic;
+import ru.yandex.javacource.kolomiets.schedule.tasks.*;
 import ru.yandex.javacource.kolomiets.schedule.historymemory.HistoryManager;
+import ru.yandex.javacource.kolomiets.schedule.tasks.Status;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,12 +12,11 @@ import java.util.HashMap;
 
 public class InMemoryTaskManager implements TaskManager {
 
-    private int numberOfTask = 0;
-    private final Map<Integer, Task> tasks = new HashMap<>();
-    private final Map<Integer, Epic> epics = new HashMap<>();
-    private final Map<Integer, Subtask> subtasks = new HashMap<>();
+    protected final Map<Integer, Task> tasks = new HashMap<>();
+    protected final Map<Integer, Epic> epics = new HashMap<>();
+    protected final Map<Integer, Subtask> subtasks = new HashMap<>();
 
-    HistoryManager historyManager = new InMemoryHistoryManager();
+    protected final HistoryManager historyManager = new InMemoryHistoryManager();
 
     private int generatorId = 0;
 
@@ -28,7 +25,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (task.getId() != 0) {
             tasks.put(task.getId(), task);
         } else {
-            task.setId(getNumberOfTask());
+            task.setId(getGeneratorId());
             tasks.put(task.getId(), task);
         }
     }
@@ -38,7 +35,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (epic.getId() != 0) {
             epics.put(epic.getId(), epic);
         } else {
-            epic.setId(getNumberOfTask());
+            epic.setId(getGeneratorId());
             epics.put(epic.getId(), epic);
         }
     }
@@ -48,7 +45,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (subtask.getId() != 0) {
             subtasks.put(subtask.getId(), subtask);
         } else {
-            subtask.setId(getNumberOfTask());
+            subtask.setId(getGeneratorId());
             subtasks.put(subtask.getId(), subtask);
         }
         Epic epic = epics.get(subtask.getEpicId());
@@ -206,9 +203,9 @@ public class InMemoryTaskManager implements TaskManager {
             for (Integer subtaskId : epic.getSubtaskIds()) {
                 Subtask subtask = subtasks.get(subtaskId);
                 if (subtask != null) {
-                    if (subtask.getStatusOfTask().equals(Status.NEW)) {
+                    if (subtask.getStatus().equals(Status.NEW)) {
                         containsNew = true;
-                    } else if (subtask.getStatusOfTask().equals(Status.DONE)) {
+                    } else if (subtask.getStatus().equals(Status.DONE)) {
                         containsDone = true;
                     } else {
                         containsInProgress = true;
@@ -217,19 +214,19 @@ public class InMemoryTaskManager implements TaskManager {
             }
 
             if (containsInProgress || containsNew && containsDone) {
-                epic.setStatusOfTask(Status.IN_PROGRESS);
-            } else if (containsNew && !containsDone && !containsInProgress) {
-                epic.setStatusOfTask(Status.NEW);
-            } else if (containsDone && !containsNew && !containsInProgress) {
-                epic.setStatusOfTask(Status.DONE);
+                epic.setStatus(Status.IN_PROGRESS);
+            } else if (containsNew) {
+                epic.setStatus(Status.NEW);
+            } else if (containsDone) {
+                epic.setStatus(Status.DONE);
             } else {
-                epic.setStatusOfTask(Status.NEW);
+                epic.setStatus(Status.NEW);
             }
         }
     }
 
-    private int getNumberOfTask() {
-        numberOfTask++;
-        return numberOfTask;
+    private int getGeneratorId() {
+        generatorId++;
+        return generatorId;
     }
 }
