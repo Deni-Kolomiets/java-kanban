@@ -19,10 +19,10 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
     }
 
 
-    public static FileBackendTaskManager loadFromFile(File file) throws ManagerSaveException {
+    public static FileBackendTaskManager loadFromFile(File file) {
         FileBackendTaskManager newTaskManager = new FileBackendTaskManager(file);
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            String line; // Обновление generatorId тут не нужен, я считаю
+            String line;
             boolean skipFirstLine = true;
             while ((line = br.readLine()) != null) {
                 if (skipFirstLine) {
@@ -160,21 +160,30 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
 
             List<Task> tasks = new ArrayList<>(super.getTasks());
             for (Task task : tasks) {
-                writer.write(CSVFormatter.toStringFromTask(task) + "\n");
+                writer.write(CSVFormatter.toStringFromTask(task) + System.lineSeparator());
             }
 
             List<Epic> epics = new ArrayList<>(super.getEpic());
             for (Epic epic : epics) {
-                writer.write(CSVFormatter.toStringFromTask(epic) + "\n");
+                writer.write(CSVFormatter.toStringFromTask(epic) + System.lineSeparator());
             }
 
             List<Subtask> subtasks = new ArrayList<>(super.getSubtasks());
             for (Subtask subtask : subtasks) {
-                writer.write(CSVFormatter.toStringFromTask(subtask) + "\n");
+                writer.write(CSVFormatter.toStringFromTask(subtask) + System.lineSeparator());
             }
 
             writer.write("\n");
 
+            historyManagerApp();
+
+        } catch (IOException e) {
+            throw new ManagerSaveException("Ошибка записи файла.");
+        }
+    }
+
+    public void historyManagerApp() {
+        try (Writer writer = new FileWriter(file)) {
             if (this.historyManager != null) {
                 List<Integer> history = new ArrayList<>();
                 for (Task task : this.historyManager.getHistory()) {
@@ -190,16 +199,13 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
                 String historyStr = historyStrBuilder.toString();
                 writer.write(historyStr + "\n");
             }
-            //if (this.historyManager != null) {
-            //    String history = CSVFormatter.historyToString(this.historyManager);
-            //    writer.write(history);
-            //}
-        } catch (IOException e) {
-            try {
-                throw new ManagerSaveException("Ошибка записи файла.");
-            } catch (ManagerSaveException ex) {
-                throw new RuntimeException(ex);
+            if (this.historyManager != null) {
+                String history = CSVFormatter.historyToString(this.historyManager);
+                writer.write(history);
             }
+        } catch (IOException e) {
+            throw new ManagerSaveException("Ошибка записи файла.");
         }
     }
+
 }

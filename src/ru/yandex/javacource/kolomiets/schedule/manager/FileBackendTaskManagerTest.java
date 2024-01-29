@@ -12,7 +12,7 @@ public class FileBackendTaskManagerTest {
 
         FileBackendTaskManager taskManager1 = FileBackendTaskManager.loadFromFile(file);
 
-        FileBackendTaskManager taskManager2 = FileBackendTaskManager.loadFromFile(file); // Сравнить 2 таск менеджжера
+        FileBackendTaskManager taskManager2 = FileBackendTaskManager.loadFromFile(file);
 
         if (taskManager1.equals(taskManager2)) {
             System.out.println("хорошо");

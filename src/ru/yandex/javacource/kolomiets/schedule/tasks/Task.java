@@ -7,15 +7,8 @@ public class Task {
     protected String title;
     protected String description;
     protected Status status;
-    protected int epic;
     protected TaskType type;
 
-    public Task(String title, String description, int epic) {
-        this.title = title;
-        this.description = description;
-        this.status = Status.NEW;
-        this.type = TaskType.TASK;
-    }
 
     public Task(String title, String description, Status status) {
         this.title = title;
@@ -32,12 +25,11 @@ public class Task {
     }
 
 
-    public Task(int id, String name, Status status, String description, int epic) {
+    public Task(int id, String name, Status status, String description) {
         this.id = id;
         this.title = name;
         this.status = status;
         this.description = description;
-        this.epic = epic;
     }
 
     public int getId() {
@@ -73,10 +65,6 @@ public class Task {
     }
     public TaskType getType() {
         return type;
-    }
-
-    public int getEpic() {
-        return epic;
     }
 
 
