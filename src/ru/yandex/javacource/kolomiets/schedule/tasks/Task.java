@@ -1,5 +1,7 @@
 package ru.yandex.javacource.kolomiets.schedule.tasks;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Task {
@@ -8,6 +10,9 @@ public class Task {
     protected String description;
     protected Status status;
     protected TaskType type;
+    protected LocalDateTime startTime;
+    protected LocalDateTime endTime;
+    protected Duration duration;
 
 
     public Task(String title, String description, Status status) {
@@ -31,6 +36,26 @@ public class Task {
         this.status = status;
         this.description = description;
     }
+
+    public Task(int id, String name, Status status, String description, LocalDateTime startTime, Duration duration) {
+        this.title = name;
+        this.status = status;
+        this.description = description;
+        this.startTime = startTime;
+        this.duration = duration;
+    }
+
+    /*
+    public Task(int id, String name, Status status, String description, LocalDateTime startTime, Duration duration) {
+        this.id = id;
+        this.title = name;
+        this.status = status;
+        this.description = description;
+        this.startTime = startTime;
+        this.duration = duration;
+    }
+
+     */
 
     public int getId() {
         return id;
@@ -67,6 +92,29 @@ public class Task {
         return type;
     }
 
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public LocalDateTime getEndTime() { //LocalDateTime startTime, Duration duration
+        return startTime.plus(duration);
+    }
+
+    public boolean isOverlapping(Task other) {
+        return startTime.isBefore(other.getEndTime()) && endTime.isAfter(other.getStartTime());
+    }
 
     @Override
     public String toString() {
