@@ -5,8 +5,10 @@ import ru.yandex.javacource.kolomiets.schedule.tasks.*;
 import ru.yandex.javacource.kolomiets.schedule.historymemory.HistoryManager;
 import ru.yandex.javacource.kolomiets.schedule.tasks.Status;
 
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 public class InMemoryTaskManager implements TaskManager {
 
@@ -14,7 +16,6 @@ public class InMemoryTaskManager implements TaskManager {
     protected final Map<Integer, Epic> epics = new HashMap<>();
     protected final Map<Integer, Subtask> subtasks = new HashMap<>();
 
-    protected List<Task> prioritizedTasksGlobal = getPrioritizedTasks();
     protected final HistoryManager historyManager = new InMemoryHistoryManager();
 
     private int generatorId = 0;
@@ -100,17 +101,10 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteSubtasks() {
-        /*
         for (Epic epic : epics.values()) {
             epic.cleanSubtaskIds();
             updateEpicStatus(epic.getId());
         }
-
-         */
-        epics.values().forEach(epic -> {
-                epic.cleanSubtaskIds();
-        updateEpicStatus(epic.getId());
-});
         subtasks.clear();
     }
 
@@ -176,7 +170,7 @@ public class InMemoryTaskManager implements TaskManager {
         savedEpic.setDescription(epic.getDescription());
     }
 
-    public void updateEpicStatus(int epicId) {
+    private void updateEpicStatus(int epicId) {
         Epic epic = epics.get(epicId);
         ArrayList<Status> statusMemory = new ArrayList<>();
         for (Integer colId : epic.getSubtaskIds()) {
@@ -199,7 +193,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    public void updateStatus(Integer epicId) {
+    private void updateStatus(Integer epicId) {
         Epic epic = epics.get(epicId);
         if (epic != null) {
             boolean containsDone = false;
@@ -235,30 +229,4 @@ public class InMemoryTaskManager implements TaskManager {
         generatorId++;
         return generatorId;
     }
-
-    @Override
-    public List<Task> getPrioritizedTasks() {
-        TreeSet<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime));
-
-        tasks.values().stream()
-                .filter(task -> task.getStartTime() != null)
-                .forEach(prioritizedTasks::add);
-
-        subtasks.values().stream()
-                .filter(subtask -> subtask.getStartTime() != null)
-                .forEach(prioritizedTasks::add);
-
-        return new ArrayList<>(prioritizedTasks);
-    }
-
-    @Override
-    public void addTask(Task task) {
-        if (prioritizedTasksGlobal.stream().anyMatch(existingTask -> existingTask.isOverlapping(task))) {
-            System.out.println("Время выполнения пересекается, невозможно добавить задачу.");
-        } else {
-            prioritizedTasksGlobal.add(task);
-            System.out.println("Задача добавлена успешно.");
-        }
-    }
-
 }
