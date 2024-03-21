@@ -1,5 +1,4 @@
 package ru.yandex.javacource.kolomiets.schedule.historymemory;
-
 import ru.yandex.javacource.kolomiets.schedule.tasks.Task;
 
 import java.util.List;

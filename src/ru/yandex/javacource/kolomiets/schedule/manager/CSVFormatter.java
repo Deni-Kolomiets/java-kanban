@@ -10,8 +10,7 @@ public class CSVFormatter {
 
     public static String toStringFromTask(Task task) {
         return task.getId() + "," + task.getType() + "," + task.getTitle() + "," + task.getStatus() +
-                "," + task.getDescription() +
-                "," + task.getEpic();
+                "," + task.getDescription();
     }
     public static Task fromStringToTask(String taskStr) {
         String[] tokens = taskStr.split(",");
@@ -27,9 +26,9 @@ public class CSVFormatter {
 
         switch(taskType) {
             case TASK:
-                return new Task(id, name, status, description, epic);
+                return new Task(id, name, status, description);
             case EPIC:
-                return new Epic(id, name, status, description, epic);
+                return new Epic(id, name, status, description);
             case SUBTASK:
                 return new Subtask(id, name, status, description, epic);
         }
@@ -57,5 +56,9 @@ public class CSVFormatter {
             }
         }
         return historyOfTasks;
+    }
+
+    public static String getHeader() {
+        return "id, title, status, description";
     }
 }

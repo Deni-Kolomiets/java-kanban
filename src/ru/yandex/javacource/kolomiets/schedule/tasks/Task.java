@@ -1,5 +1,7 @@
 package ru.yandex.javacource.kolomiets.schedule.tasks;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Task {
@@ -7,16 +9,11 @@ public class Task {
     protected String title;
     protected String description;
     protected Status status;
-    protected int epic;
     protected TaskType type;
-    protected Status statusOfTask = Status.NEW;
+    protected LocalDateTime startTime;
+    protected LocalDateTime endTime;
+    protected Duration duration;
 
-    public Task(String title, String description, int epic) {
-        this.title = title;
-        this.description = description;
-        this.statusOfTask = statusOfTask;
-        this.type = TaskType.TASK;
-    }
 
     public Task(String title, String description, Status status) {
         this.title = title;
@@ -32,13 +29,33 @@ public class Task {
         this.type = TaskType.TASK;
     }
 
-    public Task(int id, String name, Status status, String description, int epic) {
+
+    public Task(int id, String name, Status status, String description) {
         this.id = id;
         this.title = name;
         this.status = status;
         this.description = description;
-        this.epic = epic;
     }
+
+    public Task(int id, String name, Status status, String description, LocalDateTime startTime, Duration duration) {
+        this.title = name;
+        this.status = status;
+        this.description = description;
+        this.startTime = startTime;
+        this.duration = duration;
+    }
+
+    /*
+    public Task(int id, String name, Status status, String description, LocalDateTime startTime, Duration duration) {
+        this.id = id;
+        this.title = name;
+        this.status = status;
+        this.description = description;
+        this.startTime = startTime;
+        this.duration = duration;
+    }
+
+     */
 
     public int getId() {
         return id;
@@ -75,24 +92,35 @@ public class Task {
         return type;
     }
 
-    public int getEpic() {
-        return epic;
+    public LocalDateTime getStartTime() {
+        return startTime;
     }
 
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public LocalDateTime getEndTime() { //LocalDateTime startTime, Duration duration
+        return startTime.plus(duration);
+    }
+
+    public boolean isOverlapping(Task other) {
+        return startTime.isBefore(other.getEndTime()) && endTime.isAfter(other.getStartTime());
+    }
 
     @Override
     public String toString() {
         return "№" + id + " " + title +
                 ", описание: " + description +
                 ", statusOfTask: " + status;
-    }
-
-    public Status getStatusOfTask() {
-        return statusOfTask;
-    }
-
-    public void setStatusOfTask(Status statusOfTask) {
-        this.statusOfTask = statusOfTask;
     }
 
     @Override
