@@ -1,11 +1,10 @@
 package ru.yandex.javacource.kolomiets.schedule.manager;
 
 import ru.yandex.javacource.kolomiets.schedule.ManagerSaveException;
-import ru.yandex.javacource.kolomiets.schedule.manager.CSVFormatter;
-//import ru.yandex.javacource.kolomiets.schedule.tasks.*;
 import ru.yandex.javacource.kolomiets.schedule.tasks.Epic;
-import ru.yandex.javacource.kolomiets.schedule.tasks.Task;
 import ru.yandex.javacource.kolomiets.schedule.tasks.Subtask;
+import ru.yandex.javacource.kolomiets.schedule.tasks.Task;
+import ru.yandex.javacource.kolomiets.schedule.tasks.TaskType;
 
 import java.io.*;
 import java.util.ArrayList;

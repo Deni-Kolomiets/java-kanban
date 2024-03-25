@@ -1,16 +1,13 @@
 package ru.yandex.javacource.kolomiets.schedule.manager;
 
-import ru.yandex.javacource.kolomiets.schedule.historymemory.InMemoryHistoryManager;
-import ru.yandex.javacource.kolomiets.schedule.tasks.Status;
-import ru.yandex.javacource.kolomiets.schedule.tasks.Task;
-import ru.yandex.javacource.kolomiets.schedule.tasks.Subtask;
-import ru.yandex.javacource.kolomiets.schedule.tasks.Epic;
 import ru.yandex.javacource.kolomiets.schedule.historymemory.HistoryManager;
+import ru.yandex.javacource.kolomiets.schedule.historymemory.InMemoryHistoryManager;
+import ru.yandex.javacource.kolomiets.schedule.tasks.Epic;
+import ru.yandex.javacource.kolomiets.schedule.tasks.Status;
+import ru.yandex.javacource.kolomiets.schedule.tasks.Subtask;
+import ru.yandex.javacource.kolomiets.schedule.tasks.Task;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
 
@@ -21,7 +18,10 @@ public class InMemoryTaskManager implements TaskManager {
 
     HistoryManager historyManager = new InMemoryHistoryManager();
 
+    TreeSet<Task> prioritizedTasks = (TreeSet<Task>) getPrioritizedTasks();
+
     private int generatorId = 0;
+
 
     @Override
     public void addSimple(Task task) {
@@ -173,7 +173,33 @@ public class InMemoryTaskManager implements TaskManager {
         savedEpic.setDescription(epic.getDescription());
     }
 
-    private void updateEpicStatus(int epicId) {
+    @Override
+    public List<Task> getPrioritizedTasks() {
+        TreeSet<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime));
+
+        tasks.values().stream()
+                .filter(task -> task.getStartTime() != null)
+                .forEach(prioritizedTasks::add);
+
+        subtasks.values().stream()
+                .filter(subtask -> subtask.getStartTime() != null)
+                .forEach(prioritizedTasks::add);
+
+        return new ArrayList<>(prioritizedTasks);
+    }
+
+    @Override
+    public void addTask(Task task) {
+        if (prioritizedTasks.stream().anyMatch(existingTask -> existingTask.isOverlapping(task))) {
+            System.out.println("Время выполнения пересекается, невозможно добавить задачу.");
+        } else {
+            tasks.put(task.getId(), task);
+            prioritizedTasks.add(task);
+            System.out.println("Задача добавлена успешно.");
+        }
+    }
+
+    void updateEpicStatus(int epicId) {
         Epic epic = epics.get(epicId);
         ArrayList<Status> statusMemory = new ArrayList<>();
         for (Integer colId : epic.getSubtaskIds()) {
@@ -196,7 +222,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    private void updateStatus(Integer epicId) {
+    void updateStatus(Integer epicId) {
         Epic epic = epics.get(epicId);
         if (epic != null) {
             boolean containsDone = false;
@@ -206,9 +232,9 @@ public class InMemoryTaskManager implements TaskManager {
             for (Integer subtaskId : epic.getSubtaskIds()) {
                 Subtask subtask = subtasks.get(subtaskId);
                 if (subtask != null) {
-                    if (subtask.getStatusOfTask().equals(Status.NEW)) {
+                    if (subtask.getStatus().equals(Status.NEW)) {
                         containsNew = true;
-                    } else if (subtask.getStatusOfTask().equals(Status.DONE)) {
+                    } else if (subtask.getStatus().equals(Status.DONE)) {
                         containsDone = true;
                     } else {
                         containsInProgress = true;
@@ -217,13 +243,13 @@ public class InMemoryTaskManager implements TaskManager {
             }
 
             if (containsInProgress || containsNew && containsDone) {
-                epic.setStatusOfTask(Status.IN_PROGRESS);
+                epic.setStatus(Status.IN_PROGRESS);
             } else if (containsNew && !containsDone && !containsInProgress) {
-                epic.setStatusOfTask(Status.NEW);
+                epic.setStatus(Status.NEW);
             } else if (containsDone && !containsNew && !containsInProgress) {
-                epic.setStatusOfTask(Status.DONE);
+                epic.setStatus(Status.DONE);
             } else {
-                epic.setStatusOfTask(Status.NEW);
+                epic.setStatus(Status.NEW);
             }
         }
     }

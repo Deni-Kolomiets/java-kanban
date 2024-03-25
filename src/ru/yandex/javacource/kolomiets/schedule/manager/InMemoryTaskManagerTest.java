@@ -2,13 +2,16 @@ package ru.yandex.javacource.kolomiets.schedule.manager;
 
 import org.junit.Test;
 import ru.yandex.javacource.kolomiets.schedule.historymemory.InMemoryHistoryManager;
+import ru.yandex.javacource.kolomiets.schedule.tasks.Epic;
+import ru.yandex.javacource.kolomiets.schedule.tasks.Status;
+import ru.yandex.javacource.kolomiets.schedule.tasks.Subtask;
 import ru.yandex.javacource.kolomiets.schedule.tasks.Task;
-
-import ru.yandex.javacource.kolomiets.schedule.tasks.*;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.*;
 import static ru.yandex.javacource.kolomiets.schedule.tasks.Status.NEW;
