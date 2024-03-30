@@ -1,7 +1,9 @@
-package ru.yandex.javacource.kolomiets.schedule.manager;
+package test;
 
 import org.junit.Test;
 import ru.yandex.javacource.kolomiets.schedule.historymemory.InMemoryHistoryManager;
+import ru.yandex.javacource.kolomiets.schedule.manager.InMemoryTaskManager;
+import ru.yandex.javacource.kolomiets.schedule.manager.TaskManager;
 import ru.yandex.javacource.kolomiets.schedule.tasks.Epic;
 import ru.yandex.javacource.kolomiets.schedule.tasks.Status;
 import ru.yandex.javacource.kolomiets.schedule.tasks.Subtask;
@@ -135,33 +137,6 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void testUpdateEpicStatus() {
-        Subtask subtask1 = new Subtask(2, "Subtask 1", Status.NEW, "Description1", 1);
-        Subtask subtask2 = new Subtask(3, "Subtask 2", Status.IN_PROGRESS, "Description2", 1);
-
-        inMemoryTasksManager.addSub(subtask1);
-        inMemoryTasksManager.addSub(subtask2);
-
-        Epic epic = new Epic(1, "Epic 1", "Description 1", Status.NEW);
-        epic.addSubtaskId(1);
-        epic.addSubtaskId(2);
-
-        inMemoryTasksManager.addEpic(epic);
-
-        inMemoryTasksManager.updateEpicStatus(1);
-
-        assertEquals(Status.IN_PROGRESS, epic.getStatus());
-
-        Subtask subtask3 = new Subtask(4, "Subtask 3", Status.DONE, "Description", 1);
-        inMemoryTasksManager.addSub(subtask3);
-        epic.addSubtaskId(3);
-
-        inMemoryTasksManager.updateEpicStatus(1);
-
-        assertEquals(Status.DONE, epic.getStatus());
-    }
-
-    @Test
     public void testUpdateStatus() {
         Subtask subtask1 = new Subtask(1, "Subtask 1", Status.NEW, "Description", 1);
         Subtask subtask2 = new Subtask(2, "Subtask 2", Status.DONE, "Description", 1);
@@ -214,6 +189,7 @@ class InMemoryTaskManagerTest {
         assertEquals(task2, prioritizedTasks.get(2));
     }
 
+
     @Test
     public void testAddTask() {
         Task task1 = new Task(1, "Task1", NEW, "Description 1", LocalDateTime.of(2024, 1, 1, 10, 0), Duration.ofHours(1));
@@ -231,5 +207,45 @@ class InMemoryTaskManagerTest {
         Task task3 = new Task(3, "Task3", NEW, "Description 3", LocalDateTime.of(2024, 1, 1, 8, 0), Duration.ofHours(2));
         taskManager.addTask(task3);
         assertTrue(taskManager.getPrioritizedTasks().contains(task3));
+    }
+
+    @Test
+    public void testUpdateEpic() {
+        TaskManager taskManager = new InMemoryTaskManager();
+        Epic epic = new Epic(1, "Epic 1", "Description 1", Status.NEW);
+
+        taskManager.updateEpic(epic);
+
+        assertEquals(Status.IN_PROGRESS, epic.getStatus());
+
+        assertNotNull(epic.getDuration());
+
+        assertEquals("Epic 1", epic.getTitle());
+        assertEquals("Description 1", epic.getDescription());
+    }
+
+    @Test
+    public void testUpdateEpicStatus() {
+        InMemoryTaskManager taskManager = new InMemoryTaskManager();
+        Epic epic = new Epic(1, "Epic 1", "Description 1", Status.NEW);
+        taskManager.addEpic(epic);
+
+        Subtask subtask1 = new Subtask(2, "Subtask1", Status.IN_PROGRESS, "Subtask Description", 1);
+        Subtask subtask2 = new Subtask(3,"Subtask 2", Status.NEW, "Description of Subtask 2", 1);
+        taskManager.addSub(subtask1);
+        taskManager.addSub(subtask2);
+
+        epic.getSubtaskIds().add(1);
+        epic.getSubtaskIds().add(2);
+
+        taskManager.updateEpicStatus(1);
+
+        assertEquals(Status.IN_PROGRESS, epic.getStatus());
+
+        subtask2.setStatus(Status.DONE);
+
+        taskManager.updateEpicStatus(1);
+
+        assertEquals(Status.DONE, epic.getStatus());
     }
 }

@@ -1,3 +1,5 @@
+package ru.yandex.javacource.kolomiets.schedule;
+
 import ru.yandex.javacource.kolomiets.schedule.manager.FileBackendTaskManager;
 
 import java.io.File;

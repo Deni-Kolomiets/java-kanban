@@ -7,6 +7,8 @@ import ru.yandex.javacource.kolomiets.schedule.tasks.Status;
 import ru.yandex.javacource.kolomiets.schedule.tasks.Subtask;
 import ru.yandex.javacource.kolomiets.schedule.tasks.Task;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
@@ -16,11 +18,8 @@ public class InMemoryTaskManager implements TaskManager {
     private final Map<Integer, Epic> epics = new HashMap<>();
     private final Map<Integer, Subtask> subtasks = new HashMap<>();
 
-    HistoryManager historyManager = new InMemoryHistoryManager();
-
-    TreeSet<Task> prioritizedTasks = (TreeSet<Task>) getPrioritizedTasks();
-
-    private int generatorId = 0;
+    protected final HistoryManager historyManager = new InMemoryHistoryManager();
+    protected final Set<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime));
 
 
     @Override
@@ -168,14 +167,15 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateEpic(Epic epic) {
-        Epic savedEpic = epics.get(epic.getId());
-        savedEpic.setTitle(epic.getTitle());
-        savedEpic.setDescription(epic.getDescription());
+        updateEpicStatus(epic.getId());
+        updateEpicDuration(epic);
+        epic.setTitle(epic.getTitle());
+        epic.setDescription(epic.getDescription());
     }
 
+    /*
     @Override
     public List<Task> getPrioritizedTasks() {
-        TreeSet<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime));
 
         tasks.values().stream()
                 .filter(task -> task.getStartTime() != null)
@@ -186,6 +186,27 @@ public class InMemoryTaskManager implements TaskManager {
                 .forEach(prioritizedTasks::add);
 
         return new ArrayList<>(prioritizedTasks);
+    }
+
+     */
+
+    public void prioritize(Task task) {
+        final LocalDateTime startTime = task.getStartTime();
+        final LocalDateTime endTime = task.getEndTime();
+        for (Task t : prioritizedTasks) {
+            final LocalDateTime existStart = t.getStartTime();
+            final LocalDateTime existEnd = t.getEndTime();
+            if (!endTime.isAfter(existStart)) {
+                continue;
+            }
+            if (!existEnd.isAfter(startTime)) {
+                continue;
+            }
+
+            throw new TaskValidationException("Задача пересекаются с id=" + t.getId() + " c " + existStart + " по " + existEnd);
+        }
+
+        prioritizedTasks.add(task);
     }
 
     @Override
@@ -199,7 +220,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    void updateEpicStatus(int epicId) {
+    public void updateEpicStatus(int epicId) {
         Epic epic = epics.get(epicId);
         ArrayList<Status> statusMemory = new ArrayList<>();
         for (Integer colId : epic.getSubtaskIds()) {
@@ -222,7 +243,30 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    void updateStatus(Integer epicId) {
+    public void updateEpicDuration(Epic epic) {
+        LocalDateTime startTime = null;
+        LocalDateTime endTime = null;
+
+        InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
+
+        for(int id : epic.getSubtaskIds()) {
+            Subtask subtask = inMemoryTaskManager.getSubtask(id);
+            if(startTime == null || subtask.getStartTime().isBefore(startTime)) {
+                startTime = subtask.getStartTime();
+            }
+            if(endTime == null || subtask.getEndTime().isAfter(endTime)) {
+                endTime = subtask.getEndTime();
+            }
+        }
+
+        if(startTime != null && endTime != null) {
+            Duration newDuration = Duration.between(startTime, endTime);
+            epic.setDuration(newDuration);
+        }
+    }
+
+
+    public void updateStatus(Integer epicId) {
         Epic epic = epics.get(epicId);
         if (epic != null) {
             boolean containsDone = false;
@@ -253,6 +297,7 @@ public class InMemoryTaskManager implements TaskManager {
             }
         }
     }
+
 
     private int getNumberOfTask() {
         numberOfTask++;

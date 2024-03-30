@@ -77,4 +77,8 @@ public class Epic extends Task {
     public void addSubtaskId(int id) {
         subtaskIds.add(id);
     }
+
+    public void setEndTime(LocalDateTime end) {
+        this.endTime = end;
+    }
 }
