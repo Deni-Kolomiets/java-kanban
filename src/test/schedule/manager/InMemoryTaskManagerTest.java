@@ -1,4 +1,4 @@
-package test;
+package schedule.manager;
 
 import org.junit.Test;
 import ru.yandex.javacource.kolomiets.schedule.historymemory.InMemoryHistoryManager;

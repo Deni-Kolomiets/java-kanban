@@ -1,6 +1,5 @@
 package ru.yandex.javacource.kolomiets.schedule.manager;
 
-import ru.yandex.javacource.kolomiets.schedule.ManagerSaveException;
 import ru.yandex.javacource.kolomiets.schedule.tasks.Epic;
 import ru.yandex.javacource.kolomiets.schedule.tasks.Subtask;
 import ru.yandex.javacource.kolomiets.schedule.tasks.Task;

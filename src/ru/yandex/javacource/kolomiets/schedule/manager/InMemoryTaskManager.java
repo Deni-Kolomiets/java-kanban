@@ -173,7 +173,6 @@ public class InMemoryTaskManager implements TaskManager {
         epic.setDescription(epic.getDescription());
     }
 
-    /*
     @Override
     public List<Task> getPrioritizedTasks() {
 
@@ -187,8 +186,6 @@ public class InMemoryTaskManager implements TaskManager {
 
         return new ArrayList<>(prioritizedTasks);
     }
-
-     */
 
     public void prioritize(Task task) {
         final LocalDateTime startTime = task.getStartTime();

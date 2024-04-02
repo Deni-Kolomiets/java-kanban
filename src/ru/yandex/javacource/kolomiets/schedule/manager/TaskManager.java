@@ -45,7 +45,7 @@ public interface TaskManager {
 
     void updateEpic(Epic epic);
 
-    //List<Task> getPrioritizedTasks();
+    List<Task> getPrioritizedTasks();
 
     void addTask(Task task);
 
