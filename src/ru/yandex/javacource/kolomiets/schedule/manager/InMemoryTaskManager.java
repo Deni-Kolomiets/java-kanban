@@ -30,6 +30,12 @@ public class InMemoryTaskManager implements TaskManager {
             task.setId(getNumberOfTask());
             tasks.put(task.getId(), task);
         }
+
+        try {
+            prioritize(task);
+        } catch (TaskValidationException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     @Override
@@ -55,6 +61,12 @@ public class InMemoryTaskManager implements TaskManager {
             epic.addSubtaskId(subtask.getId());
         }
         updateEpicStatusAndDuration(epic.getId());
+
+        try {
+            prioritize(subtask);
+        } catch (TaskValidationException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     @Override

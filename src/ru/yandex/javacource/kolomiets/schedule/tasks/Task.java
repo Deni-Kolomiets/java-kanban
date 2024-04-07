@@ -50,17 +50,6 @@ public class Task {
         this.status = status;
     }
 
-    /*
-    public Task(int id, String name, Status status, String description, LocalDateTime startTime, Duration duration) {
-        this.id = id;
-        this.title = name;
-        this.status = status;
-        this.description = description;
-        this.startTime = startTime;
-        this.duration = duration;
-    }
-
-     */
 
     public int getId() {
         return id;
