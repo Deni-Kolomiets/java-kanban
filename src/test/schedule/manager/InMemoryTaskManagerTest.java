@@ -137,37 +137,27 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void testUpdateStatus() {
-        Subtask subtask1 = new Subtask(1, "Subtask 1", Status.NEW, "Description", 1);
-        Subtask subtask2 = new Subtask(2, "Subtask 2", Status.DONE, "Description", 1);
+    public void testUpdateEpicStatusAndDuration() {
+        Epic epic = new Epic("title", "description", NEW);
+        epic.setId(1);
+        epic.setSubtaskIds((ArrayList<Integer>) Arrays.asList(1, 2, 3));
 
-        inMemoryTasksManager.addSub(subtask1);
-        inMemoryTasksManager.addSub(subtask2);
+        Subtask subtask1 = new Subtask(1, LocalDateTime.of(2021, 10, 1, 12, 0),
+                LocalDateTime.of(2024, 10, 1, 16, 0), Status.NEW);
+        Subtask subtask2 = new Subtask(2, LocalDateTime.of(2021, 10, 1, 10, 0),
+                LocalDateTime.of(2024, 10, 1, 14, 0), Status.DONE);
+        Subtask subtask3 = new Subtask(3, LocalDateTime.of(2021, 10, 1, 11, 0),
+                LocalDateTime.of(2024, 10, 1, 15, 0), Status.IN_PROGRESS);
 
-        Epic epic = new Epic(1, "Epic 1", "Description 1", Status.NEW);
-        epic.addSubtaskId(1);
-        epic.addSubtaskId(2);
+        InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
+        inMemoryTaskManager.addSub(subtask1);
+        inMemoryTaskManager.addSub(subtask2);
+        inMemoryTaskManager.addSub(subtask3);
 
-        inMemoryTasksManager.addEpic(epic);
-
-        inMemoryTasksManager.updateStatus(1);
-
-        assertEquals(Status.IN_PROGRESS, epic.getStatus());
-
-        Subtask subtask3 = new Subtask(3, "Subtask 3", Status.IN_PROGRESS, "Description", 1);
-        inMemoryTasksManager.addSub(subtask3);
-        epic.addSubtaskId(3);
-
-        inMemoryTasksManager.updateStatus(1);
+        inMemoryTaskManager.updateEpicStatusAndDuration(1);
 
         assertEquals(Status.IN_PROGRESS, epic.getStatus());
-
-        subtask1.setStatus(Status.DONE);
-        subtask3.setStatus(Status.DONE);
-
-        inMemoryTasksManager.updateStatus(1);
-
-        assertEquals(Status.DONE, epic.getStatus());
+        assertEquals(Duration.ofHours(5), epic.getDuration());
     }
 
     @Test

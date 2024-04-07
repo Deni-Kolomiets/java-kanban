@@ -54,7 +54,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (epic != null) {
             epic.addSubtaskId(subtask.getId());
         }
-        updateStatus(subtask.getEpicId());
+        updateEpicStatusAndDuration(epic.getId());
     }
 
     @Override
@@ -167,8 +167,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateEpic(Epic epic) {
-        updateEpicStatus(epic.getId());
-        updateEpicDuration(epic);
+        updateEpicStatusAndDuration(epic.getId());
         epic.setTitle(epic.getTitle());
         epic.setDescription(epic.getDescription());
     }
@@ -240,50 +239,40 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    public void updateEpicDuration(Epic epic) {
-        LocalDateTime startTime = null;
-        LocalDateTime endTime = null;
-
+    public void updateEpicStatusAndDuration(Integer epicId) {
         InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
-
-        for(int id : epic.getSubtaskIds()) {
-            Subtask subtask = inMemoryTaskManager.getSubtask(id);
-            if(startTime == null || subtask.getStartTime().isBefore(startTime)) {
-                startTime = subtask.getStartTime();
-            }
-            if(endTime == null || subtask.getEndTime().isAfter(endTime)) {
-                endTime = subtask.getEndTime();
-            }
-        }
-
-        if(startTime != null && endTime != null) {
-            Duration newDuration = Duration.between(startTime, endTime);
-            epic.setDuration(newDuration);
-        }
-    }
-
-
-    public void updateStatus(Integer epicId) {
         Epic epic = epics.get(epicId);
         if (epic != null) {
+            LocalDateTime startTime = null;
+            LocalDateTime endTime = null;
             boolean containsDone = false;
             boolean containsNew = false;
             boolean containsInProgress = false;
 
             for (Integer subtaskId : epic.getSubtaskIds()) {
-                Subtask subtask = subtasks.get(subtaskId);
-                if (subtask != null) {
-                    if (subtask.getStatus().equals(Status.NEW)) {
-                        containsNew = true;
-                    } else if (subtask.getStatus().equals(Status.DONE)) {
-                        containsDone = true;
-                    } else {
-                        containsInProgress = true;
-                    }
+                Subtask subtask = inMemoryTaskManager.getSubtask(subtaskId);
+                if (startTime == null || subtask.getStartTime().isBefore(startTime)) {
+                    startTime = subtask.getStartTime();
+                }
+                if (endTime == null || subtask.getEndTime().isAfter(endTime)) {
+                    endTime = subtask.getEndTime();
+                }
+
+                if (subtask.getStatus().equals(Status.NEW)) {
+                    containsNew = true;
+                } else if (subtask.getStatus().equals(Status.DONE)) {
+                    containsDone = true;
+                } else {
+                    containsInProgress = true;
                 }
             }
 
-            if (containsInProgress || containsNew && containsDone) {
+            if (startTime != null && endTime != null) {
+                Duration newDuration = Duration.between(startTime, endTime);
+                epic.setDuration(newDuration);
+            }
+
+            if (containsInProgress || (containsNew && containsDone)) {
                 epic.setStatus(Status.IN_PROGRESS);
             } else if (containsNew && !containsDone && !containsInProgress) {
                 epic.setStatus(Status.NEW);
@@ -294,7 +283,6 @@ public class InMemoryTaskManager implements TaskManager {
             }
         }
     }
-
 
     private int getNumberOfTask() {
         numberOfTask++;
