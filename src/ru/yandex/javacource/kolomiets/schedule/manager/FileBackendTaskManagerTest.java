@@ -5,11 +5,14 @@ import java.io.File;
 
 public class FileBackendTaskManagerTest {
     public static void main(String[] args) {
-        File file = new File("CSVFile.txt");
+        File file = new File("ru/yandex/javacource/kolomiets/schedule/resources/CSVFile.csv");
 
-        FileBackendTaskManager taskManager1 = new FileBackendTaskManager(file);
+        //FileBackendTaskManager taskManager1 = new FileBackendTaskManager(file);
+        TaskManager manager = Managers.getDefault();
 
-        FileBackendTaskManager taskManager2 = FileBackendTaskManager.loadFromFile(file); // Сравнить 2 таск менеджжера
+        FileBackendTaskManager taskManager1 = FileBackendTaskManager.loadFromFile(file);
+
+        FileBackendTaskManager taskManager2 = FileBackendTaskManager.loadFromFile(file);
 
         if (taskManager1.equals(taskManager2)) {
             System.out.println("хорошо");
